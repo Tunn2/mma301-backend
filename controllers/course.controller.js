@@ -4,6 +4,7 @@ const {
   getCourseByIdService,
   getCourseByCategoryIdService,
 } = require("../services/course.service");
+const { uploadImageToFirebase } = require("../services/upload.service");
 
 const getCourseByIdController = async (req, res) => {
   try {
@@ -16,8 +17,11 @@ const getCourseByIdController = async (req, res) => {
 
 const createCourseController = async (req, res) => {
   try {
-    const { title, description, price, thumbnailUrl, author, category } =
-      req.body;
+    if (!req.file) {
+      throw new Error("Thumbnail is required");
+    }
+    const thumbnailUrl = await uploadImageToFirebase(req.file);
+    const { title, description, price, author, category } = req.body;
     return res.send(
       await createCourseService({
         title,

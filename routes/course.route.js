@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer");
+const upload = multer();
 const {
   authenticate,
   checkAdminRole,
@@ -17,6 +19,6 @@ courseRoute.get("/category/:categoryId", getCourseByCategoryIdController);
 
 courseRoute.use(authenticate);
 courseRoute.use(checkAdminRole);
-courseRoute.post("/", createCourseController);
+courseRoute.post("/", upload.single("thumbnail"), createCourseController);
 
 module.exports = courseRoute;
