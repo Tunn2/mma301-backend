@@ -2,6 +2,7 @@ const {
   createCourseService,
   getCoursesService,
   getCourseByIdService,
+  getCourseByCategoryIdService,
 } = require("../services/course.service");
 
 const getCourseByIdController = async (req, res) => {
@@ -41,7 +42,20 @@ const getCoursesController = async (req, res) => {
   }
 };
 
+const getCourseByCategoryIdController = async (req, res) => {
+  try {
+    const { page, limit } = req.query;
+    const { categoryId } = req.params;
+    return res.send(
+      await getCourseByCategoryIdService({ limit, categoryId, page })
+    );
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
+  getCourseByCategoryIdController,
   createCourseController,
   getCoursesController,
   getCourseByIdController,

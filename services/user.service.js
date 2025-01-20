@@ -13,6 +13,8 @@ const findUserByIdService = async (id) => {
   }
 };
 
+const createKidService = ({ id }) => {};
+
 module.exports = {
   findUserByIdService,
 };

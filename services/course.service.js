@@ -39,8 +39,32 @@ const getCourseByIdService = async (id) => {
   return course;
 };
 
+const getCourseByCategoryIdService = async ({
+  categoryId,
+  page = 1,
+  limit = 10,
+}) => {
+  if (!categoryId || !new mongoose.Types.ObjectId(categoryId))
+    throw new Error("Invalid categoryId");
+
+  const skip = (page - 1) * limit;
+  const courses = await Course.find({
+    category: new mongoose.Types.ObjectId(categoryId),
+  })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  return {
+    data: courses,
+    totalPage: Math.ceil(courses.length / limit),
+    currentPage: page,
+  };
+};
+
 module.exports = {
   createCourseService,
   getCoursesService,
   getCourseByIdService,
+  getCourseByCategoryIdService,
 };
