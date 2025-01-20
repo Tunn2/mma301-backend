@@ -4,7 +4,10 @@ const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(customParseFormat);
 
 const getPromotionByIdService = async (id) => {
-  const promotion = await Promotion.findOne({ _id: id, isActive: true });
+  const promotion = await Promotion.findOne({ _id: id, isActive: true })
+    .select("_id code rate startDate endDate")
+    .lean();
+
   if (!promotion) throw new Error("Promotion not found");
   return promotion;
 };
@@ -14,7 +17,11 @@ const getPromotionsService = async ({ search = "", limit = 10, page = 1 }) => {
     ? { code: { $regex: search, $options: "i", isActive: true } }
     : { isActive: true };
   const skip = (page - 1) * limit;
-  const promotions = await Promotion.find(query).skip(skip).limit(+limit);
+  const promotions = await Promotion.find(query)
+    .skip(skip)
+    .limit(+limit)
+    .select("_id code rate startDate endDate")
+    .lean();
 
   return {
     data: promotions,
