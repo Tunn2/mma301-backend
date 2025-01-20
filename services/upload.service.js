@@ -56,8 +56,6 @@ const uploadVideoToFirebase = async (file) => {
       }/o/${encodeURIComponent(blob.name)}?alt=media`;
       resolve(publicUrl);
     });
-
-    // Ghi dữ liệu file vào stream
     blobStream.end(file.buffer);
   });
 };

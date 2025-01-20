@@ -26,7 +26,7 @@ const getCoursesService = async ({ search = "", page = 1, limit = 10 }) => {
   const courses = await Course.find(query)
     .skip(skip)
     .limit(+limit)
-    .select("_id title category description price")
+    .select("_id title category description price thumbnailUrl")
     .lean();
   return {
     data: courses,
@@ -39,7 +39,7 @@ const getCourseByIdService = async (id) => {
   if (!id || !new mongoose.Types.ObjectId(id))
     throw new Error("Invalid objectId");
   const course = await Course.findOne({ _id: id })
-    .select("_id title category description price")
+    .select("_id title category description price thumbnailUrl")
     .lean();
   if (!course) throw new Error("Course not found");
   return course;
@@ -59,7 +59,7 @@ const getCourseByCategoryIdService = async ({
   })
     .skip(skip)
     .limit(limit)
-    .select("_id title category description price")
+    .select("_id title category description price thumbnailUrl")
     .lean();
 
   return {
