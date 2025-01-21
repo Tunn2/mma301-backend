@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const enrollmentSchema = new mongoose.Schema(
+const childSchema = new mongoose.Schema(
   {
     parents: {
       type: mongoose.Types.ObjectId,
@@ -21,5 +21,5 @@ const enrollmentSchema = new mongoose.Schema(
   }
 );
 
-const Enrollment = mongoose.model("Enrollment", enrollmentSchema);
-module.exports = Enrollment;
+const Child = mongoose.model("Child", childSchema);
+module.exports = Child;

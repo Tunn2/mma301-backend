@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const loginService = async ({ email, password }) => {
   try {
     const user = await User.findOne({ email })
-      .select("_id username email phone password")
+      .select("_id username email phone password role")
       .lean();
     if (user) {
       const validPassword = await bcrypt.compare(password, user.password);
@@ -40,7 +40,7 @@ const registerService = async ({ username, password, email, phone }) => {
     });
 
     const user = await User.findOne({ email })
-      .select("-password -updatedAt -createdAt -isActive")
+      .select("-password -updatedAt -createdAt -isActive role")
       .lean();
     return user;
   } catch (error) {

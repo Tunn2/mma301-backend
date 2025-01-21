@@ -11,6 +11,8 @@ const courseRoute = require("./routes/course.route");
 const categoryRoute = require("./routes/category.route");
 const promotionRoute = require("./routes/promotion.route");
 const dayjs = require("dayjs");
+const userRoute = require("./routes/users.route");
+const enrollmentRoute = require("./routes/enrollment.route");
 
 var app = express();
 
@@ -29,6 +31,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/courses", courseRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/promotions", promotionRoute);
+app.use("/api/users", userRoute);
+app.use("/api/enrollments", enrollmentRoute);
 
 app.use(function (req, res, next) {
   next(createError(404));
