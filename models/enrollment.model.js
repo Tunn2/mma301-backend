@@ -27,7 +27,7 @@ const enrollmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["PENDING", "DONE"],
+      enum: ["PENDING", "COMPLETED"],
       default: "PENDING",
     },
   },

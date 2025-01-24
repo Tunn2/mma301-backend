@@ -1,11 +1,20 @@
 require("dotenv").config();
-const { createEnrollmentService } = require("../services/enrollment.service");
+const {
+  createEnrollmentService,
+  getEnrollmentByIdService,
+  updateEnrollmentByIdService,
+} = require("../services/enrollment.service");
 const {
   VNPay,
   ProductCode,
   dateFormat,
   VnpLocale,
   ignoreLogger,
+  IpnFailChecksum,
+  IpnOrderNotFound,
+  IpnInvalidAmount,
+  InpOrderAlreadyConfirmed,
+  IpnSuccess,
 } = require("vnpay");
 
 const vnpay = new VNPay({
@@ -52,8 +61,30 @@ const createEnrollmentController = async (req, res) => {
 
 const verifyIPNCall = async (req, res) => {
   try {
-    return res.send("kaka");
+    const verify = vnpay.verifyIpnCall(req.query);
+    if (!verify.isSuccess) {
+      return res.json(IpnFailChecksum);
+    }
+
+    const foundEnrollment = await getEnrollmentByIdService(verify.vnp_TxnRef);
+
+    if (!foundEnrollment || verify.vnp_TxnRef !== foundEnrollment._id)
+      return res.json(IpnOrderNotFound);
+
+    if (verify.vnp_Amount !== foundEnrollment.totalPrice) {
+      return res.json(IpnInvalidAmount);
+    }
+
+    // Nếu đơn hàng đã được xác nhận trước đó
+    if (foundEnrollment.status === "COMPLETED") {
+      return res.json(InpOrderAlreadyConfirmed);
+    }
+
+    await updateEnrollmentByIdService({ id: foundEnrollment._id });
+
+    return res.json(IpnSuccess);
   } catch (error) {
+    console.log("verify error", error);
     return res.send({ errorCode: 1, message: error.message });
   }
 };
