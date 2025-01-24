@@ -72,7 +72,10 @@ const verifyIPNCall = async (req, res) => {
     console.log("2");
     console.log(foundEnrollment);
     console.log(verify.vnp_TxnRef);
-    if (!foundEnrollment || verify.vnp_TxnRef !== foundEnrollment._id)
+    if (
+      !foundEnrollment ||
+      verify.vnp_TxnRef !== foundEnrollment._id.toString()
+    )
       return res.json(IpnOrderNotFound);
 
     console.log("3");
