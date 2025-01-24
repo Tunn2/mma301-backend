@@ -10,8 +10,9 @@ const {
 
 const enrollmentRoute = express.Router();
 
+enrollmentRoute.get("/vnpay-ipn", verifyIPNCall);
+
 enrollmentRoute.use(authenticate);
 enrollmentRoute.post("/", createEnrollmentController);
-enrollmentRoute.get("/vnpay-ipn", verifyIPNCall);
 
 module.exports = enrollmentRoute;
