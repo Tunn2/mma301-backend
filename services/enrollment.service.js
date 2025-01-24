@@ -44,7 +44,6 @@ const getEnrollmentByIdService = async (id) => {
 const updateEnrollmentByIdService = async ({ id, status = "COMPLETED" }) => {
   if (!new mongoose.Types.ObjectId(id))
     throw new Error("Invalid enrollment id");
-  console.log("vcl");
   return await Enrollment.updateOne(
     { _id: new mongoose.Types.ObjectId(id) },
     { status }

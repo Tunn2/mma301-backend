@@ -53,8 +53,6 @@ const createEnrollmentController = async (req, res) => {
 
     return res.json({ paymentUrl });
   } catch (error) {
-    console.log(error);
-
     return res.send({ errorCode: 1, message: error.message });
   }
 };
@@ -62,29 +60,22 @@ const createEnrollmentController = async (req, res) => {
 const verifyIPNCall = async (req, res) => {
   try {
     const verify = vnpay.verifyIpnCall(req.query);
-    console.log("1");
     if (!verify.isSuccess) {
       return res.json(IpnFailChecksum);
     }
 
     const foundEnrollment = await getEnrollmentByIdService(verify.vnp_TxnRef);
 
-    console.log("2");
-    console.log(foundEnrollment);
-    console.log(verify.vnp_TxnRef);
     if (
       !foundEnrollment ||
       verify.vnp_TxnRef !== foundEnrollment._id.toString()
     )
       return res.json(IpnOrderNotFound);
 
-    console.log("3");
     if (verify.vnp_Amount !== foundEnrollment.totalPrice) {
       return res.json(IpnInvalidAmount);
     }
 
-    // Nếu đơn hàng đã được xác nhận trước đó
-    console.log("4");
     if (foundEnrollment.status === "COMPLETED") {
       return res.json(InpOrderAlreadyConfirmed);
     }
