@@ -32,7 +32,9 @@ const createEnrollmentService = async ({ userId, courseId, promotionId }) => {
 const getEnrollmentByIdService = async (id) => {
   if (!new mongoose.Types.ObjectId(id))
     throw new Error("Invalid enrollment id");
-  const foundEnrollment = await Enrollment.findOne({ _id: id })
+  const foundEnrollment = await Enrollment.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+  })
     .select("-__v -updatedAt")
     .lean();
   if (!foundEnrollment) throw new Error("Enrollment not found");
@@ -43,7 +45,10 @@ const updateEnrollmentByIdService = async ({ id, status = "COMPLETED" }) => {
   if (!new mongoose.Types.ObjectId(id))
     throw new Error("Invalid enrollment id");
   console.log("vcl");
-  return await Enrollment.updateOne({ _id: id }, { status });
+  return await Enrollment.updateOne(
+    { _id: new mongoose.Types.ObjectId(id) },
+    { status }
+  );
 };
 
 module.exports = {
