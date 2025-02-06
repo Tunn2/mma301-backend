@@ -1,6 +1,8 @@
 const {
   createCategoryService,
   getCategoriesService,
+  updateCategoryByIdService,
+  getCategoryByIdService,
 } = require("../services/category.service");
 
 const createCategoryController = async (req, res) => {
@@ -20,7 +22,28 @@ const getCategoriesController = async (req, res) => {
   }
 };
 
+const updateCategoryByIdController = async (req, res) => {
+  try {
+    const { title } = req.body;
+    const { id } = req.params;
+    return res.send(await updateCategoryByIdService(id, { title }));
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
+const getCategoryBydIdController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    return res.send(await getCategoryByIdService(id));
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   createCategoryController,
   getCategoriesController,
+  updateCategoryByIdController,
+  getCategoryBydIdController,
 };

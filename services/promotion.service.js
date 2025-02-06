@@ -41,6 +41,9 @@ const createPromotionService = async ({ code, rate, startDate, endDate }) => {
     );
   }
 
+  const promotion = await Promotion.findOne({ code });
+  if (promotion) throw new Error("This code existed");
+
   const promotions = await Promotion.find({ rate }).lean();
 
   if (promotions) {
@@ -64,6 +67,20 @@ const createPromotionService = async ({ code, rate, startDate, endDate }) => {
     startDate: startDate,
     endDate: endDate,
   });
+};
+
+const updatePromotionById = async (id, { code, rate, startDate, endDate }) => {
+  const format = "DD-MM-YYYY";
+  if (
+    dayjs(startDate, format).isBefore(dayjs(), "day") ||
+    dayjs(endDate, format).isBefore(dayjs(startDate, format), "day")
+  ) {
+    throw new Error(
+      "The start date cannot be before today, and the end date must be after the start date"
+    );
+  }
+
+  const promotions = await Promotion.find({ rate }).lean();
 };
 
 const checkOverlap = (startDate1, endDate1, startDate2, endDate2, format) => {

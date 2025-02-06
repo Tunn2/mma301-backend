@@ -4,26 +4,25 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const loginService = async ({ email, password }) => {
-  try {
-    const user = await User.findOne({ email })
-      .select("_id username email phone password role")
-      .lean();
-    if (user) {
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (validPassword) {
-        const token = jwt.sign(user, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRES_IN,
-        });
-        delete user["password"];
-        return {
-          ...user,
-          access_token: token,
-        };
-      }
+  const user = await User.findOne({ email })
+    .select("_id username email password phone role")
+    .lean();
+  if (user) {
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (validPassword) {
+      const token = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+      delete user["password"];
+      return {
+        ...user,
+        access_token: token,
+      };
+    } else {
+      throw new Error("Invalid email or password");
     }
-    return 0;
-  } catch (error) {
-    console.log(error);
+  } else {
+    throw new Error("Invalid email or password");
   }
 };
 
@@ -40,7 +39,7 @@ const registerService = async ({ username, password, email, phone }) => {
     });
 
     const user = await User.findOne({ email })
-      .select("-password -updatedAt -createdAt -isActive role")
+      .select("-password -updatedAt -createdAt -isActive")
       .lean();
     return user;
   } catch (error) {

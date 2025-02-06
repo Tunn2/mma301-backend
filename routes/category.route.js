@@ -6,14 +6,18 @@ const {
 const {
   createCategoryController,
   getCategoriesController,
+  updateCategoryByIdController,
+  getCategoryBydIdController,
 } = require("../controllers/category.controller");
 const categoryRoute = express.Router();
 
 categoryRoute.get("/", getCategoriesController);
+categoryRoute.get("/:id", getCategoryBydIdController);
 
 categoryRoute.use(authenticate);
 categoryRoute.use(checkAdminRole);
 
 categoryRoute.post("/", createCategoryController);
+categoryRoute.put("/:id", updateCategoryByIdController);
 
 module.exports = categoryRoute;

@@ -21,7 +21,9 @@ const createCourseService = async ({
 };
 
 const getCoursesService = async ({ search = "", page = 1, limit = 10 }) => {
-  const query = search ? { title: { $regex: search, $options: "i" } } : {};
+  const query = search
+    ? { title: { $regex: search, $options: "i" }, isActive: true }
+    : {};
   const skip = (page - 1) * limit;
   const courses = await Course.find(query)
     .skip(skip)
@@ -38,7 +40,7 @@ const getCoursesService = async ({ search = "", page = 1, limit = 10 }) => {
 const getCourseByIdService = async (id) => {
   if (!id || !new mongoose.Types.ObjectId(id))
     throw new Error("Invalid objectId");
-  const course = await Course.findOne({ _id: id })
+  const course = await Course.findOne({ _id: id, isActive: true })
     .select("_id title category description price thumbnailUrl")
     .lean();
   if (!course) throw new Error("Course not found");
@@ -56,6 +58,7 @@ const getCourseByCategoryIdService = async ({
   const skip = (page - 1) * limit;
   const courses = await Course.find({
     category: new mongoose.Types.ObjectId(categoryId),
+    isActive: true,
   })
     .skip(skip)
     .limit(limit)
@@ -69,9 +72,25 @@ const getCourseByCategoryIdService = async ({
   };
 };
 
+const deleteACourseByIdService = async (id) => {
+  if (!id || !new mongoose.Types.ObjectId(id))
+    throw new Error("Invalid category id");
+  const course = await Course.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    isActive: true,
+  });
+  if (!course) throw new Error("Course not found");
+  await Course.updateOne(
+    { _id: new mongoose.Types.ObjectId(id) },
+    { isActive: false }
+  );
+  return "Delete successfully";
+};
+
 module.exports = {
   createCourseService,
   getCoursesService,
   getCourseByIdService,
   getCourseByCategoryIdService,
+  deleteACourseByIdService,
 };
