@@ -13,6 +13,8 @@ const promotionRoute = require("./routes/promotion.route");
 const dayjs = require("dayjs");
 const userRoute = require("./routes/users.route");
 const enrollmentRoute = require("./routes/enrollment.route");
+const chapterRoute = require("./routes/chapter.route");
+const lessonRoute = require("./routes/lesson.route");
 
 var app = express();
 
@@ -33,6 +35,8 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/promotions", promotionRoute);
 app.use("/api/users", userRoute);
 app.use("/api/enrollments", enrollmentRoute);
+app.use("/api/chapters", chapterRoute);
+app.use("/api/lessons", lessonRoute);
 
 app.use(function (req, res, next) {
   next(createError(404));

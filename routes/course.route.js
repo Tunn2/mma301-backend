@@ -11,14 +11,19 @@ const {
   getCourseByIdController,
   getCourseByCategoryIdController,
   deleteCourseByIdController,
+  getCoursesByUserIdController,
 } = require("../controllers/course.controller");
+const { default: mongoose } = require("mongoose");
 const courseRoute = express.Router();
 
 courseRoute.get("/", getCoursesController);
-courseRoute.get("/:id", getCourseByIdController);
+
 courseRoute.get("/category/:categoryId", getCourseByCategoryIdController);
+courseRoute.get("/:id", getCourseByIdController);
 
 courseRoute.use(authenticate);
+courseRoute.get("/my-courses/purchased", getCoursesByUserIdController);
+
 courseRoute.use(checkAdminRole);
 courseRoute.post("/", upload.single("thumbnail"), createCourseController);
 courseRoute.delete("/:id", deleteCourseByIdController);

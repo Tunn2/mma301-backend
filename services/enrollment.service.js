@@ -20,6 +20,16 @@ const createEnrollmentService = async ({ userId, courseId, promotionId }) => {
     totalPrice = totalPrice - (totalPrice * foundPromotion.rate) / 100;
   }
 
+  const foundEnrollment = await Enrollment.findOne({
+    user: new mongoose.Types.ObjectId(userId),
+    course: new mongoose.Types.ObjectId(courseId),
+    status: "COMPLETED",
+  }).lean();
+
+  if (foundEnrollment) {
+    throw new Error("You have already purchased this course");
+  }
+
   return await Enrollment.create({
     user: new mongoose.Types.ObjectId(userId),
     course: new mongoose.Types.ObjectId(courseId),

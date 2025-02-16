@@ -14,5 +14,6 @@ enrollmentRoute.get("/vnpay-ipn", verifyIPNCall);
 
 enrollmentRoute.use(authenticate);
 enrollmentRoute.post("/", createEnrollmentController);
+enrollmentRoute.get("/");
 
 module.exports = enrollmentRoute;

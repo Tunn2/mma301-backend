@@ -4,6 +4,7 @@ const {
   getCourseByIdService,
   getCourseByCategoryIdService,
   deleteACourseByIdService,
+  getCoursesByUserIdService,
 } = require("../services/course.service");
 const { uploadImageToFirebase } = require("../services/upload.service");
 
@@ -68,10 +69,19 @@ const deleteCourseByIdController = async (req, res) => {
   }
 };
 
+const getCoursesByUserIdController = async (req, res) => {
+  try {
+    return res.send(await getCoursesByUserIdService(req.userId));
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   getCourseByCategoryIdController,
   createCourseController,
   getCoursesController,
   getCourseByIdController,
   deleteCourseByIdController,
+  getCoursesByUserIdController,
 };

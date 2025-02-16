@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Course = require("../models/course.model");
+const Enrollment = require("../models/enrollment.model");
 
 const createCourseService = async ({
   title,
@@ -87,10 +88,27 @@ const deleteACourseByIdService = async (id) => {
   return "Delete successfully";
 };
 
+const getCoursesByUserIdService = async (id) => {
+  const enrollments = await Enrollment.find({
+    user: new mongoose.Types.ObjectId(id),
+    status: "COMPLETED",
+  })
+    .lean()
+    .select("course");
+  console.log(enrollments);
+  let ids = [];
+  for (let errollment of enrollments) {
+    ids.push(errollment.course);
+  }
+  const courses = await Course.find({ _id: { $in: ids } }).lean();
+  return courses;
+};
+
 module.exports = {
   createCourseService,
   getCoursesService,
   getCourseByIdService,
   getCourseByCategoryIdService,
   deleteACourseByIdService,
+  getCoursesByUserIdService,
 };
