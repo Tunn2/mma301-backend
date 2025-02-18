@@ -1,4 +1,7 @@
-const { createLessonService } = require("../services/lesson.service");
+const {
+  createLessonService,
+  handleCompletedLessonService,
+} = require("../services/lesson.service");
 const {
   uploadVideoToFirebase,
   uploadDocumentToFirebase,
@@ -20,6 +23,17 @@ const createLessonController = async (req, res) => {
   }
 };
 
+const handleCompletedLessonController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { lessonId } = req.params;
+    return res.send(await handleCompletedLessonService({ userId, lessonId }));
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   createLessonController,
+  handleCompletedLessonController,
 };

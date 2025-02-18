@@ -1,6 +1,8 @@
 const { default: mongoose } = require("mongoose");
 const Course = require("../models/course.model");
 const Enrollment = require("../models/enrollment.model");
+const Chapter = require("../models/chapter.model");
+// const { getChaptersByCourseIdService } = require("./chapter.service");
 
 const createCourseService = async ({
   title,
@@ -41,11 +43,61 @@ const getCoursesService = async ({ search = "", page = 1, limit = 10 }) => {
 const getCourseByIdService = async (id) => {
   if (!id || !new mongoose.Types.ObjectId(id))
     throw new Error("Invalid objectId");
-  const course = await Course.findOne({ _id: id, isActive: true })
-    .select("_id title category description price thumbnailUrl")
-    .lean();
-  if (!course) throw new Error("Course not found");
-  return course;
+
+  const courseData = await Course.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(id) },
+    },
+    {
+      $lookup: {
+        from: "chapters",
+        localField: "_id",
+        foreignField: "course",
+        as: "chapters",
+      },
+    },
+    {
+      $unwind: {
+        path: "$chapters",
+        preserveNullAndEmptyArrays: true, // Giữ giá trị null nếu không có chapter
+      },
+    },
+    {
+      $lookup: {
+        from: "lessons",
+        localField: "chapters._id",
+        foreignField: "chapter",
+        as: "chapters.lessons",
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        title: { $first: "$title" },
+        description: { $first: "$description" },
+        price: { $first: "$price" },
+        thumbnailUrl: { $first: "$thumbnailUrl" },
+        author: { $first: "$author" },
+        category: { $first: "$category" },
+        isActive: { $first: "$isActive" },
+        createdAt: { $first: "$createdAt" },
+        updatedAt: { $first: "$updatedAt" },
+        chapters: { $push: "$chapters" },
+      },
+    },
+    {
+      $set: {
+        chapters: {
+          $filter: {
+            input: "$chapters",
+            as: "chapter",
+            cond: { $ne: ["$$chapter", {}] }, // Loại bỏ object rỗng
+          },
+        },
+      },
+    },
+  ]);
+  return courseData;
 };
 
 const getCourseByCategoryIdService = async ({

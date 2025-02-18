@@ -13,10 +13,16 @@ const loginService = async ({ email, password }) => {
       const token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
+      const refreshToken = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: "15d",
+      });
+      // await User.updateOne({ refreshToken, _id: user._id });
+
       delete user["password"];
       return {
         ...user,
         access_token: token,
+        refresh_token: refreshToken,
       };
     } else {
       throw new Error("Invalid email or password");

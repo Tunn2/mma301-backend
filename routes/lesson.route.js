@@ -5,13 +5,16 @@ const {
   authenticate,
   checkAdminRole,
 } = require("../middlewares/auth.middleware");
-const { createLessonController } = require("../controllers/lesson.controller");
+const {
+  createLessonController,
+  handleCompletedLessonController,
+} = require("../controllers/lesson.controller");
 
 const lessonRoute = express.Router();
 
 lessonRoute.use(authenticate);
-lessonRoute.get("/course/:courseId");
-
+// lessonRoute.get("/course/:courseId");
+lessonRoute.post("/completed/:lessonId", handleCompletedLessonController);
 lessonRoute.use(checkAdminRole);
 lessonRoute.post(
   "/",

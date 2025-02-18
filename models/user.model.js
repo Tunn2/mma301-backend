@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema(
       enum: ["CUSTOMER", "ADMIN"],
       default: "CUSTOMER",
     },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
+    refreshTokenUsed: {
+      type: Array,
+      default: [],
+    },
     isActive: {
       type: Boolean,
       default: false,

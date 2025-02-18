@@ -7,5 +7,6 @@ const authRoute = express.Router();
 
 authRoute.post("/register", registerController);
 authRoute.post("/login", loginController);
+authRoute.post("/refresh");
 
 module.exports = authRoute;

@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Lesson = require("../models/lesson.model");
 const { getChapterByIdService } = require("./chapter.service");
+const CompletedLesson = require("../models/completed-lesson.model");
 
 const createLessonService = async ({
   title,
@@ -25,4 +26,28 @@ const getLessonByChapterIdService = async (chapterId) => {
   return lessons;
 };
 
-module.exports = { createLessonService, getLessonByChapterIdService };
+const handleCompletedLessonService = async ({ userId, lessonId }) => {
+  const foundLesson = await Lesson.find({
+    _id: new mongoose.Types.ObjectId(lessonId),
+  });
+  if (!foundLesson) throw new Error("Lesson not found");
+
+  const foundCompletedLesson = await CompletedLesson.findOne({
+    user: new mongoose.Types.ObjectId(userId),
+    lesson: new mongoose.Types.ObjectId(lessonId),
+  });
+  console.log(userId);
+  console.log(foundCompletedLesson);
+  if (foundCompletedLesson) throw new Error("This lesson has been finished");
+
+  return await CompletedLesson.create({
+    user: new mongoose.Types.ObjectId(userId),
+    lesson: new mongoose.Types.ObjectId(lessonId),
+  });
+};
+
+module.exports = {
+  createLessonService,
+  getLessonByChapterIdService,
+  handleCompletedLessonService,
+};
