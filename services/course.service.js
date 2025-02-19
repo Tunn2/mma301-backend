@@ -17,6 +17,7 @@ const createCourseService = async ({
   return await Course.create({
     title,
     description,
+    author,
     price,
     thumbnailUrl,
     category,

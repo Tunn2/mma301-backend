@@ -1,4 +1,8 @@
-const { registerService, loginService } = require("../services/auth.service");
+const {
+  registerService,
+  loginService,
+  refreshTokenService,
+} = require("../services/auth.service");
 
 const registerController = async (req, res) => {
   try {
@@ -19,7 +23,20 @@ const loginController = async (req, res) => {
   }
 };
 
+const refreshTokenController = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken)
+      return res.send({ errorCode: 1, message: "Refresh token not found" });
+    const token = await refreshTokenService(refreshToken);
+    return res.send(token);
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
+  refreshTokenController,
 };

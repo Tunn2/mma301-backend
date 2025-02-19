@@ -2,6 +2,7 @@ require("dotenv").config();
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
 
 const loginService = async ({ email, password }) => {
   const user = await User.findOne({ email })
@@ -10,15 +11,21 @@ const loginService = async ({ email, password }) => {
   if (user) {
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
+      delete user["password"];
       const token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
       const refreshToken = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: "15d",
       });
-      // await User.updateOne({ refreshToken, _id: user._id });
+      await User.updateOne(
+        { _id: user._id },
+        {
+          $addToSet: { refreshTokenUsed: user.refreshToken },
+          $set: { refreshToken: refreshToken },
+        }
+      );
 
-      delete user["password"];
       return {
         ...user,
         access_token: token,
@@ -53,6 +60,24 @@ const registerService = async ({ username, password, email, phone }) => {
   }
 };
 
+const refreshTokenService = async (refreshToken) => {
+  const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  const { _id } = decodedToken;
+  const user = await User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
+    .select("_id username email password phone role refreshToken")
+    .lean();
+  if (!user) throw new Error("There's something wrong");
+  if (user.refreshToken != refreshToken)
+    throw new Error("There's something wrong");
+
+  const token = jwt.sign(user, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+  return {
+    access_token: token,
+  };
+};
+
 const checkEmailExist = async (email) => {
   const foundUser = await User.findOne({ email });
   if (foundUser) return true;
@@ -62,4 +87,5 @@ const checkEmailExist = async (email) => {
 module.exports = {
   loginService,
   registerService,
+  refreshTokenService,
 };

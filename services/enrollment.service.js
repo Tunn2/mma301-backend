@@ -2,13 +2,16 @@ const { default: mongoose } = require("mongoose");
 const { getCourseByIdService } = require("./course.service");
 const { getPromotionByIdService } = require("./promotion.service");
 const Enrollment = require("../models/enrollment.model");
+const Course = require("../models/course.model");
 
 const createEnrollmentService = async ({ userId, courseId, promotionId }) => {
   if (!new mongoose.Types.ObjectId(courseId))
     throw new Error("Invalid course id");
-  const foundCourse = await getCourseByIdService(courseId);
+  const foundCourse = await Course.findOne({
+    _id: new mongoose.Types.ObjectId(courseId),
+    isActive: true,
+  }).lean();
   if (!foundCourse) throw new Error("Course not found");
-
   let foundPromotion;
   let price = foundCourse.price;
   let totalPrice = price;

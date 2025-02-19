@@ -3,14 +3,17 @@ const { findUserByIdService } = require("../services/user.service");
 
 const authenticate = (req, res, next) => {
   const { authorization } = req.headers;
-  if (!authorization) return res.status(401).json({ message: "Unauthorized" });
+  if (!authorization) return res.status(403).json({ message: "Unauthorized" });
   const token = authorization.split(" ")[1];
   try {
     const { _id } = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = _id;
     return next();
   } catch (error) {
-    return res.status(401).json({ message: "Unauthorized" });
+    if (error.name == "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
+    return res.status(403).json({ message: "Unauthorized" });
   }
 };
 
@@ -21,7 +24,7 @@ const checkAdminRole = async (req, res, next) => {
   }
 
   return res
-    .status(401)
+    .status(403)
     .json({ message: "You do not have permission to do this action" });
 };
 
