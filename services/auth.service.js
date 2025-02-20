@@ -6,7 +6,7 @@ const { default: mongoose } = require("mongoose");
 
 const loginService = async ({ email, password }) => {
   const user = await User.findOne({ email })
-    .select("_id username email password phone role")
+    .select("_id username email password phone role refreshToken")
     .lean();
   if (user) {
     const validPassword = await bcrypt.compare(password, user.password);
@@ -21,11 +21,13 @@ const loginService = async ({ email, password }) => {
       await User.updateOne(
         { _id: user._id },
         {
-          $addToSet: { refreshTokenUsed: user.refreshToken },
+          $addToSet: {
+            refreshTokenUsed: user.refreshToken,
+          },
           $set: { refreshToken: refreshToken },
         }
       );
-
+      delete user["refreshToken"];
       return {
         ...user,
         access_token: token,
