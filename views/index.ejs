@@ -1,28 +1,65 @@
-<% layout('layout') %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>course List</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>course List</h1>
+    <a href="/add">Add course</a>
 
-<h2>Product List</h2>
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Price</th>
-    <th>Description</th>
-    <th>Actions</th>
-  </tr>
-  <% products.forEach(product => { %>
-  <tr>
-    <td><%= product.name %></td>
-    <td>$<%= product.price %></td>
-    <td><%= product.description %></td>
-    <td>
-      <a href="/edit/<%= product._id %>">Edit</a>
-      <form
-        action="/delete/<%= product._id %>"
-        method="POST"
-        style="display: inline"
-      >
-        <button type="submit">Delete</button>
-      </form>
-    </td>
-  </tr>
-  <% }); %>
-</table>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+      <% categories.forEach(category => { %>
+      <tr id="row-<%= category._id %>">
+        <td><%= category.title %></td>
+        <td>
+          <a href="/edit/<%= category._id %>">Edit</a>
+          <button
+            onclick="deleteCategory('<%= category._id %>')"
+            style="display: inline"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <% }); %>
+    </table>
+    <script>
+      async function deleteCategory(id) {
+        if (!confirm("Are you sure you want to delete this category?")) return;
+
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`/api/categories/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+
+          if (!data.errorCode) {
+            const row = document.getElementById(`row-${id}`);
+            if (row) {
+              row.remove();
+            } else {
+              console.warn("Element not found in DOM");
+            }
+          } else {
+            alert(error.message || "Failed to delete the category");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred. Please try again.");
+        }
+      }
+    </script>
+  </body>
+</html>

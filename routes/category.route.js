@@ -8,6 +8,7 @@ const {
   getCategoriesController,
   updateCategoryByIdController,
   getCategoryBydIdController,
+  deleteCategoryByIdController,
 } = require("../controllers/category.controller");
 const categoryRoute = express.Router();
 
@@ -19,5 +20,6 @@ categoryRoute.use(checkAdminRole);
 
 categoryRoute.post("/", createCategoryController);
 categoryRoute.put("/:id", updateCategoryByIdController);
+categoryRoute.delete("/:id", deleteCategoryByIdController);
 
 module.exports = categoryRoute;

@@ -41,9 +41,14 @@ const getCoursesService = async ({ search = "", page = 1, limit = 10 }) => {
   };
 };
 
-const getCourseByIdService = async (id) => {
-  if (!id || !new mongoose.Types.ObjectId(id))
+const getCourseByIdService = async (id, userId) => {
+  if (
+    !id ||
+    !mongoose.Types.ObjectId.isValid(id) ||
+    !mongoose.Types.ObjectId.isValid(userId)
+  ) {
     throw new Error("Invalid objectId");
+  }
 
   const courseData = await Course.aggregate([
     {
@@ -57,18 +62,55 @@ const getCourseByIdService = async (id) => {
         as: "chapters",
       },
     },
-    {
-      $unwind: {
-        path: "$chapters",
-        preserveNullAndEmptyArrays: true, // Giữ giá trị null nếu không có chapter
-      },
-    },
+    { $unwind: { path: "$chapters", preserveNullAndEmptyArrays: true } },
     {
       $lookup: {
         from: "lessons",
         localField: "chapters._id",
         foreignField: "chapter",
         as: "chapters.lessons",
+      },
+    },
+    {
+      $lookup: {
+        from: "completedLessons",
+        let: {
+          lessonIds: "$chapters.lessons._id",
+          userId: new mongoose.Types.ObjectId(userId),
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$userId", "$$userId"] }, // Lọc theo userId
+                  { $in: ["$lessonId", "$$lessonIds"] }, // Lọc theo lessonId
+                ],
+              },
+            },
+          },
+        ],
+        as: "completedLessons",
+      },
+    },
+    {
+      $addFields: {
+        "chapters.lessons": {
+          $map: {
+            input: "$chapters.lessons",
+            as: "lesson",
+            in: {
+              $mergeObjects: [
+                "$$lesson",
+                {
+                  isCompleted: {
+                    $in: ["$$lesson._id", "$completedLessons.lessonId"], // Đánh dấu bài học hoàn thành
+                  },
+                },
+              ],
+            },
+          },
+        },
       },
     },
     {
@@ -92,13 +134,14 @@ const getCourseByIdService = async (id) => {
           $filter: {
             input: "$chapters",
             as: "chapter",
-            cond: { $ne: ["$$chapter", {}] }, // Loại bỏ object rỗng
+            cond: { $ne: ["$$chapter", {}] },
           },
         },
       },
     },
   ]);
-  return courseData;
+
+  return courseData.length > 0 ? courseData[0] : null;
 };
 
 const getCourseByCategoryIdService = async ({

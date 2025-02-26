@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Category</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>Edit Category</h1>
+    <a href="/">Back to List</a>
+
+    <form id="editCategoryForm">
+      <label for="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value="<%= category.title %>"
+        required
+      />
+
+      <button type="submit">Update Category</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("editCategoryForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const categoryId = "<%= category._id %>";
+          const title = document.getElementById("title").value;
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`/api/categories/${categoryId}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ title }),
+            });
+
+            const data = await response.json();
+
+            if (!data.errorCode) {
+              alert("Category updated successfully!");
+              window.location.href = "/";
+            } else {
+              alert("Failed to update category.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Something went wrong. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

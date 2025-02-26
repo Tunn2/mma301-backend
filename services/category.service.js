@@ -31,9 +31,17 @@ const getCategoryByIdService = async (id) => {
     .lean();
 };
 
+const deleteCategoryByIdService = async (id) => {
+  if (!id || !new mongoose.Types.ObjectId(id))
+    throw new Error("Invalid category id");
+  await Category.deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+  return true;
+};
+
 module.exports = {
   createCategoryService,
   getCategoriesService,
   updateCategoryByIdService,
   getCategoryByIdService,
+  deleteCategoryByIdService,
 };

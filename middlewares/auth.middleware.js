@@ -11,9 +11,9 @@ const authenticate = (req, res, next) => {
     return next();
   } catch (error) {
     if (error.name == "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expired" });
+      return res.status(401).json({ errorCode: 1, message: "Token expired" });
     }
-    return res.status(403).json({ message: "Unauthorized" });
+    return res.status(403).json({ errorCode: 1, message: "Unauthorized" });
   }
 };
 
@@ -25,7 +25,10 @@ const checkAdminRole = async (req, res, next) => {
 
   return res
     .status(403)
-    .json({ message: "You do not have permission to do this action" });
+    .json({
+      errorCode: 1,
+      message: "You do not have permission to do this action",
+    });
 };
 
 module.exports = {

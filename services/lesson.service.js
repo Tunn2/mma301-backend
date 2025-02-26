@@ -36,8 +36,6 @@ const handleCompletedLessonService = async ({ userId, lessonId }) => {
     user: new mongoose.Types.ObjectId(userId),
     lesson: new mongoose.Types.ObjectId(lessonId),
   });
-  console.log(userId);
-  console.log(foundCompletedLesson);
   if (foundCompletedLesson) throw new Error("This lesson has been finished");
 
   return await CompletedLesson.create({
@@ -46,8 +44,17 @@ const handleCompletedLessonService = async ({ userId, lessonId }) => {
   });
 };
 
+const getCompletedLessonByUserIdService = async ({ userId }) => {
+  return await CompletedLesson.find({
+    user: new mongoose.Types.ObjectId(userId),
+  })
+    .select("_id")
+    .lean();
+};
+
 module.exports = {
   createLessonService,
   getLessonByChapterIdService,
   handleCompletedLessonService,
+  getCompletedLessonByUserIdService,
 };

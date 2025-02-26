@@ -8,6 +8,7 @@ const {
 const {
   createLessonController,
   handleCompletedLessonController,
+  getCompletedLessonByUserIdController,
 } = require("../controllers/lesson.controller");
 
 const lessonRoute = express.Router();
@@ -15,6 +16,8 @@ const lessonRoute = express.Router();
 lessonRoute.use(authenticate);
 // lessonRoute.get("/course/:courseId");
 lessonRoute.post("/completed/:lessonId", handleCompletedLessonController);
+lessonRoute.get("/completed/", getCompletedLessonByUserIdController);
+
 lessonRoute.use(checkAdminRole);
 lessonRoute.post(
   "/",

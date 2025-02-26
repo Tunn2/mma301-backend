@@ -1,39 +1,27 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
+  padding: 20px;
 }
 
-nav {
-  background: #333;
-  padding: 10px;
-}
-
-nav h1,
-nav a {
-  color: white;
-  display: inline-block;
-  margin: 0 10px;
-}
-
-.container {
-  margin-top: 20px;
+h1 {
+  color: #333;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 th,
 td {
+  border: 1px solid #ddd;
   padding: 10px;
-  border: 1px solid #ccc;
-  text-align: center;
+  text-align: left;
 }
 
-form {
-  display: inline;
+th {
+  background-color: #f4f4f4;
 }
 
 button {

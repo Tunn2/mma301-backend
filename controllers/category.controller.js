@@ -3,6 +3,7 @@ const {
   getCategoriesService,
   updateCategoryByIdService,
   getCategoryByIdService,
+  deleteCategoryByIdService,
 } = require("../services/category.service");
 
 const createCategoryController = async (req, res) => {
@@ -41,9 +42,19 @@ const getCategoryBydIdController = async (req, res) => {
   }
 };
 
+const deleteCategoryByIdController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    return res.send(await deleteCategoryByIdService(id));
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   createCategoryController,
   getCategoriesController,
   updateCategoryByIdController,
   getCategoryBydIdController,
+  deleteCategoryByIdController,
 };

@@ -12,18 +12,6 @@ const loginService = async ({ email, password }) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
       delete user["password"];
-
-      // await User.updateOne(
-      //   { _id: user._id },
-      //   {
-      //     $addToSet: {
-      //       refreshTokenUsed: user.refreshToken,
-      //     },
-      //     $set: { refreshToken: refreshToken },
-      //   }
-      // );
-      // delete user["refreshToken"];
-      // console.log(user);
       const { _id, role } = user;
       const token = jwt.sign({ _id, role }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,

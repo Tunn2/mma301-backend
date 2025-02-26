@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Category</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <h1>Add Category</h1>
+    <a href="/">Back to List</a>
+
+    <form id="categoryForm">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required />
+
+      <button type="submit">Add Category</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("categoryForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const title = document.getElementById("title").value;
+
+          const token = localStorage.getItem("token");
+
+          const response = await fetch("/api/categories", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ title }),
+          });
+
+          const data = await response.json();
+          console.log(data);
+
+          if (!data.errorCode) {
+            alert("Category added successfully!");
+            window.location.href = "/";
+          } else {
+            alert("Failed to add Category. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

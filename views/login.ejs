@@ -68,7 +68,8 @@
 
             const data = await response.json();
             if (!data.errorCode) {
-              window.location.href = "/courses";
+              localStorage.setItem("token", data.access_token);
+              window.location.href = "/";
             } else {
               document.getElementById("errorMessage").innerText =
                 data.message || "Login failed!";
