@@ -45,11 +45,13 @@ const handleCompletedLessonService = async ({ userId, lessonId }) => {
 };
 
 const getCompletedLessonByUserIdService = async ({ userId }) => {
-  return await CompletedLesson.find({
+  const lesson = await CompletedLesson.find({
     user: new mongoose.Types.ObjectId(userId),
   })
     .select("_id")
     .lean();
+  const ids = lesson.map((lesson) => lesson._id);
+  return ids;
 };
 
 module.exports = {
