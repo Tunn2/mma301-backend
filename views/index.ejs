@@ -1,11 +1,28 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<% layout('layout') %>
+
+<h2>Product List</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Description</th>
+    <th>Actions</th>
+  </tr>
+  <% products.forEach(product => { %>
+  <tr>
+    <td><%= product.name %></td>
+    <td>$<%= product.price %></td>
+    <td><%= product.description %></td>
+    <td>
+      <a href="/edit/<%= product._id %>">Edit</a>
+      <form
+        action="/delete/<%= product._id %>"
+        method="POST"
+        style="display: inline"
+      >
+        <button type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  <% }); %>
+</table>

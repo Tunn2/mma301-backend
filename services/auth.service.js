@@ -6,28 +6,31 @@ const { default: mongoose } = require("mongoose");
 
 const loginService = async ({ email, password }) => {
   const user = await User.findOne({ email })
-    .select("_id username email password phone role refreshToken")
+    .select("_id username email password phone role")
     .lean();
   if (user) {
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
       delete user["password"];
-      const token = jwt.sign(user, process.env.JWT_SECRET, {
+
+      // await User.updateOne(
+      //   { _id: user._id },
+      //   {
+      //     $addToSet: {
+      //       refreshTokenUsed: user.refreshToken,
+      //     },
+      //     $set: { refreshToken: refreshToken },
+      //   }
+      // );
+      // delete user["refreshToken"];
+      // console.log(user);
+      const { _id } = user;
+      const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
-      const refreshToken = jwt.sign(user, process.env.JWT_SECRET, {
+      const refreshToken = jwt.sign({ _id }, process.env.JWT_SECRET, {
         expiresIn: "15d",
       });
-      await User.updateOne(
-        { _id: user._id },
-        {
-          $addToSet: {
-            refreshTokenUsed: user.refreshToken,
-          },
-          $set: { refreshToken: refreshToken },
-        }
-      );
-      delete user["refreshToken"];
       return {
         ...user,
         access_token: token,

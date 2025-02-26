@@ -29,9 +29,10 @@ const refreshTokenController = async (req, res) => {
     if (!refreshToken)
       return res.send({ errorCode: 1, message: "Refresh token not found" });
     const token = await refreshTokenService(refreshToken);
+
     return res.send(token);
   } catch (error) {
-    return res.send({ errorCode: 1, message: error.message });
+  return res.send({ errorCode: 1, message: error.message });
   }
 };
 

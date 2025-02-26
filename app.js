@@ -15,12 +15,14 @@ const userRoute = require("./routes/users.route");
 const enrollmentRoute = require("./routes/enrollment.route");
 const chapterRoute = require("./routes/chapter.route");
 const lessonRoute = require("./routes/lesson.route");
-
+const viewRoute = require("./routes/view.route");
+const expressLayouts = require("express-ejs-layouts");
 var app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(expressLayouts);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -37,6 +39,7 @@ app.use("/api/users", userRoute);
 app.use("/api/enrollments", enrollmentRoute);
 app.use("/api/chapters", chapterRoute);
 app.use("/api/lessons", lessonRoute);
+app.use("/", viewRoute);
 
 app.use(function (req, res, next) {
   next(createError(404));
