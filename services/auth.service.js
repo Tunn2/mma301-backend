@@ -24,11 +24,11 @@ const loginService = async ({ email, password }) => {
       // );
       // delete user["refreshToken"];
       // console.log(user);
-      const { _id } = user;
-      const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
+      const { _id, role } = user;
+      const token = jwt.sign({ _id, role }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
-      const refreshToken = jwt.sign({ _id }, process.env.JWT_SECRET, {
+      const refreshToken = jwt.sign({ _id, role }, process.env.JWT_SECRET, {
         expiresIn: "15d",
       });
       return {
