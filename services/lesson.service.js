@@ -48,9 +48,9 @@ const getCompletedLessonByUserIdService = async ({ userId }) => {
   const lesson = await CompletedLesson.find({
     user: new mongoose.Types.ObjectId(userId),
   })
-    .select("_id")
+    .select("lesson")
     .lean();
-  const ids = lesson.map((lesson) => lesson._id);
+  const ids = lesson.map((lesson) => lesson.lesson);
   return ids;
 };
 
