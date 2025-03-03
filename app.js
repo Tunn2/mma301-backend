@@ -17,12 +17,14 @@ const chapterRoute = require("./routes/chapter.route");
 const lessonRoute = require("./routes/lesson.route");
 const viewRoute = require("./routes/view.route");
 const expressLayouts = require("express-ejs-layouts");
+const cors = require("cors");
 var app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
+app.use(cors());
 
 app.use(logger("dev"));
 app.use(express.json());
