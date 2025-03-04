@@ -2,6 +2,7 @@ const {
   createPromotionService,
   getPromotionsService,
   getPromotionByIdService,
+  getAvailablePromotionService,
 } = require("../services/promotion.service");
 
 const createPromotionController = async (req, res) => {
@@ -33,8 +34,17 @@ const getPromotionsController = async (req, res) => {
   }
 };
 
+const getAvailablePromotionController = async (req, res) => {
+  try {
+    return res.send(await getAvailablePromotionService());
+  } catch (error) {
+    return res.send({ errorCode: 1, message: error.message });
+  }
+};
+
 module.exports = {
   createPromotionController,
   getPromotionsController,
   getPromotionByIdController,
+  getAvailablePromotionController,
 };

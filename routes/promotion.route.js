@@ -7,10 +7,12 @@ const {
   createPromotionController,
   getPromotionsController,
   getPromotionByIdController,
+  getAvailablePromotionController,
 } = require("../controllers/promotion.controller");
 const promotionRoute = express.Router();
 
 promotionRoute.use(authenticate);
+promotionRoute.get("/available", getAvailablePromotionController);
 promotionRoute.get("/", getPromotionsController);
 promotionRoute.get("/:id", getPromotionByIdController);
 

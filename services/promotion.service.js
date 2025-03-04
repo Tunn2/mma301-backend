@@ -12,6 +12,31 @@ const getPromotionByIdService = async (id) => {
   return promotion;
 };
 
+const getAvailablePromotionService = async () => {
+  const now = new Date();
+
+  // Chuyển đổi ngày string "dd-MM-yyyy" từ MongoDB thành Date để so sánh
+  const promotions = await Promotion.find()
+    .select("_id code rate startDate endDate")
+    .lean();
+
+  // Lọc dữ liệu trong JavaScript vì MongoDB không thể so sánh string dạng ngày đúng
+  const validPromotions = promotions.filter((promo) => {
+    const startDate = convertStringToDate(promo.startDate);
+    const endDate = convertStringToDate(promo.endDate);
+
+    return startDate <= now && endDate >= now;
+  });
+
+  return validPromotions;
+};
+
+// Hàm chuyển đổi "dd-MM-yyyy" thành Date object
+const convertStringToDate = (dateStr) => {
+  const [dd, mm, yyyy] = dateStr.split("-");
+  return new Date(`${yyyy}-${mm}-${dd}`); // Chuyển đổi thành "yyyy-MM-dd" để Date hiểu đúng
+};
+
 const getPromotionsService = async ({ search = "", limit = 10, page = 1 }) => {
   const query = search
     ? { code: { $regex: search, $options: "i", isActive: true } }
@@ -95,4 +120,5 @@ module.exports = {
   createPromotionService,
   getPromotionsService,
   getPromotionByIdService,
+  getAvailablePromotionService,
 };

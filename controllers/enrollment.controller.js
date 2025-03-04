@@ -60,10 +60,14 @@ const createEnrollmentController = async (req, res) => {
 const verifyIPNCall = async (req, res) => {
   try {
     const verify = vnpay.verifyIpnCall(req.query);
+
     if (!verify.isSuccess) {
       return res.json(IpnFailChecksum);
     }
 
+    const { vnp_TransactionStatus } = req.query;
+    console.log(vnp_TransactionStatus);
+    console.log(verify);
     const foundEnrollment = await getEnrollmentByIdService(verify.vnp_TxnRef);
 
     if (
