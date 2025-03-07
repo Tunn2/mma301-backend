@@ -98,7 +98,7 @@ const getCourseByIdService = async (id) => {
       },
     },
   ]);
-  return courseData;
+  return courseData[0];
 };
 
 const getCourseByCategoryIdService = async ({
