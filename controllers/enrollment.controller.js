@@ -45,7 +45,7 @@ const createEnrollmentController = async (req, res) => {
       vnp_TxnRef: enrollment._id,
       vnp_OrderInfo: `Thanh toan don hang ${enrollment._id}`,
       vnp_OrderType: ProductCode.Other,
-      vnp_ReturnUrl: "http://localhost:3000/api/courses",
+      vnp_ReturnUrl: "mmasdn://",
       vnp_Locale: VnpLocale.VN,
       vnp_CreateDate: dateFormat(new Date()),
       vnp_ExpireDate: dateFormat(tomorrow),
