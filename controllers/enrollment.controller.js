@@ -45,7 +45,7 @@ const createEnrollmentController = async (req, res) => {
       vnp_TxnRef: enrollment._id,
       vnp_OrderInfo: `Thanh toan don hang ${enrollment._id}`,
       vnp_OrderType: ProductCode.Other,
-      vnp_ReturnUrl: "mmasdn://checkout/payment",
+      vnp_ReturnUrl: "https://mma301-backend.onrender.com/",
       vnp_Locale: VnpLocale.VN,
       vnp_CreateDate: dateFormat(new Date()),
       vnp_ExpireDate: dateFormat(tomorrow),
